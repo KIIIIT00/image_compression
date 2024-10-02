@@ -18,6 +18,7 @@ class ModuleChecker:
                     self.imported_modules[module_name] = module  
                 except ImportError:
                     print(f"Failed to import {module_name}.")
+                    
     def use_module_function(self, module_name, func_name, *args, **kwargs):
         if module_name in self.imported_modules:
             module = self.imported_modules[module_name]

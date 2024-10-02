@@ -20,9 +20,9 @@ class CompressionOption:
                             help='Path to the output folder for processed images.')
         
         # Compression settings
-        parser.add_argument('--quality_ratio', type=int, 
+        parser.add_argument('--compression_ratio', type=int, 
                             default=50, 
-                            help='quality ratio for images[0-100] (default: 50).')
+                            help='compression ratio for images[0-95] (default: 50).')
         parser.add_argument('--convert_png_to_jpeg', 
                             action='store_true', 
                             default=True, 
@@ -44,6 +44,6 @@ class CompressionOption:
         print("----------------- Options ---------------")
         print(f"               input_folder: {options.input_folder}")
         print(f"               output_folder: {options.output_folder}")
-        print(f"               quality_ratio: {options.quality_ratio}")
+        print(f"               compression_ratio: {options.compression_ratio}")
         print(f"               convert_png_to_jpeg: {options.convert_png_to_jpeg}")
         print("----------------- End -------------------")
