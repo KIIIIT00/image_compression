@@ -8,13 +8,15 @@ class UI_Window:
         self.root.title("画像圧縮アプリ")
         
         # File selection button
-        self.file_button = tk.Button(self.root, text="画像ファイルを選択", command=self.select_files)
-        self.file_button.pack(pady=5)
+        self.file_button = self.create_button(text="画像ファイルを選択",
+                                              command=self.select_files
+                                              )
 
         # Folder selection button
-        self.folder_button = tk.Button(self.root, text="フォルダを選択", command=self.select_folder)
-        self.folder_button.pack(pady=5)
-
+        self.folder_button = self.create_button(text="フォルダを選択",
+                                                command=self.select_folder
+                                                )
+        
         # Label to display selected files
         self.file_label = tk.Label(self.root, text="選択されたファイルはありません", wraplength=400, justify="left")
         self.file_label.pack(pady=5)
@@ -28,11 +30,13 @@ class UI_Window:
         self.combo = ttk.Combobox(self.root, values=values, state="readonly")
         self.combo.set("普通の圧縮") # Set initial value
         self.combo.pack(pady=10)
-        # Label to show selected compression level
-        self.combo_label = tk.Label(self.root, text="Selected: 普通の圧縮")
-        self.combo_label.pack(pady=5)
         # Bind selection event
         self.combo.bind("<<ComboboxSelected>>", self.on_selects)
+        
+        # Compress button
+        self.compress_button = self.create_button(text="圧縮する",
+                                                  command=self.compress_images
+                                                  )
         
         # Frame for image list (for better positioning)
         self.image_frame = tk.Frame(self.root)
@@ -60,14 +64,46 @@ class UI_Window:
 
         # List to store image references
         self.image_refs = []
-        
+    
+    def create_button(self, text, command, bg="SystemButtonFace", fg="black", width=15, height=2):
+        """
+        Create a tkinter button with customizable options.
+
+        Args:
+            text (str): The button text.
+            command (function): The function to call when the button is clicked.
+            bg (str, optional): Background color. Default is OS default.
+            fg (str, optional): Foreground (text) color. Default is black.
+            width (int, optional): Button width. Default is 15.
+            height (int, optional): Button height. Default is 2.
+
+        Returns:
+            tk.Button: The created button.
+        """
+        button = tk.Button(self.root,
+                            text=text,
+                            command=command,
+                            bg=bg,
+                            fg=fg,
+                            width=width,
+                            height=height
+                            )
+        button.pack(pady=5)
+        return button
+    
     def on_selects(self, event):
         """
         Update label when selection changes
         """
         selected_value = self.combo.get()
-        self.combo_label.config(text=f"Selected: {selected_value}")
     
+    def compress_images(self):
+        """
+        Process when the compress button is clicked
+        """
+        selected_option = self.combo.get()
+        print(f"選択された圧縮レベル: {selected_option}")
+        
     def select_files(self):
         """
         Open file selection dialog
@@ -86,7 +122,9 @@ class UI_Window:
             self.image_list_label.pack_forget()  # Hide if no image is selected
             
     def select_folder(self):
-        """Open folder selection dialog"""
+        """
+        Open folder selection dialog
+        """
         folder_path = filedialog.askdirectory()
 
         # Update label with selected folder
@@ -97,7 +135,9 @@ class UI_Window:
             self.folder_label.config(text="選択されたフォルダはありません")
 
     def display_images(self, file_paths):
-        """Display all selected images in the scrollable frame"""
+        """
+        Display all selected images in the scrollable frame
+        """
         # Clear previous images
         for widget in self.scroll_frame.winfo_children():
             widget.destroy()
