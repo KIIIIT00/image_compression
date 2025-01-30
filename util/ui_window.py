@@ -8,23 +8,34 @@ class UI_Window:
         self.root.title("画像圧縮アプリ")
         
         # File selection button
-        self.file_button = tk.Button(root, text="画像ファイルを選択", command=self.select_files)
+        self.file_button = tk.Button(self.root, text="画像ファイルを選択", command=self.select_files)
         self.file_button.pack(pady=5)
 
         # Folder selection button
-        self.folder_button = tk.Button(root, text="フォルダを選択", command=self.select_folder)
+        self.folder_button = tk.Button(self.root, text="フォルダを選択", command=self.select_folder)
         self.folder_button.pack(pady=5)
 
         # Label to display selected files
-        self.file_label = tk.Label(root, text="選択されたファイルはありません", wraplength=400, justify="left")
+        self.file_label = tk.Label(self.root, text="選択されたファイルはありません", wraplength=400, justify="left")
         self.file_label.pack(pady=5)
 
         # Label to display selected folder
-        self.folder_label = tk.Label(root, text="選択されたフォルダはありません", wraplength=400, justify="left")
+        self.folder_label = tk.Label(self.root, text="選択されたフォルダはありません", wraplength=400, justify="left")
         self.folder_label.pack(pady=5)
         
+        # Create dropdown list
+        values = ["強めの圧縮", "普通の圧縮", "弱めの圧縮"]
+        self.combo = ttk.Combobox(self.root, values=values, state="readonly")
+        self.combo.set("普通の圧縮") # Set initial value
+        self.combo.pack(pady=10)
+        # Label to show selected compression level
+        self.combo_label = tk.Label(self.root, text="Selected: 普通の圧縮")
+        self.combo_label.pack(pady=5)
+        # Bind selection event
+        self.combo.bind("<<ComboboxSelected>>", self.on_selects)
+        
         # Frame for image list (for better positioning)
-        self.image_frame = tk.Frame(root)
+        self.image_frame = tk.Frame(self.root)
         self.image_frame.pack(fill="both", expand=True, pady=10)
         
         # Label for selected images (Initially hidden)
@@ -33,8 +44,8 @@ class UI_Window:
         self.image_list_label.pack_forget()  # Hide initially
         
         # Scrollable frame for images
-        self.canvas = Canvas(root)
-        self.scroll_y = ttk.Scrollbar(root, orient="vertical", command=self.canvas.yview)
+        self.canvas = Canvas(self.root)
+        self.scroll_y = ttk.Scrollbar(self.root, orient="vertical", command=self.canvas.yview)
         self.scroll_frame = ttk.Frame(self.canvas)
 
         self.scroll_frame.bind(
@@ -49,9 +60,18 @@ class UI_Window:
 
         # List to store image references
         self.image_refs = []
-
+        
+    def on_selects(self, event):
+        """
+        Update label when selection changes
+        """
+        selected_value = self.combo.get()
+        self.combo_label.config(text=f"Selected: {selected_value}")
+    
     def select_files(self):
-        """Open file selection dialog"""
+        """
+        Open file selection dialog
+        """
         file_paths = filedialog.askopenfilenames(
             filetypes=[("画像ファイル", "*.png;*.jpg;*.jpeg;*.heic;*.heif;*.bmp;*.gif;*.tiff;*.webp")]
         )
