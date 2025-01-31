@@ -42,6 +42,8 @@ class UI_Window:
                                                   command=self.compress_images
                                                   )
         
+        # Progress bar
+        
         # Frame for image list (for better positioning)
         self.image_frame = tk.Frame(self.root)
         self.image_frame.pack(fill="both", expand=True, pady=10)
