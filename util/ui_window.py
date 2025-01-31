@@ -8,22 +8,25 @@ class UI_Window:
         self.root.title("画像圧縮アプリ")
         
         # File selection button
-        self.file_button = self.create_button(text="画像ファイルを選択",
+        self.file_button = self.create_button(root = self.root, 
+                                              text="画像ファイルを選択",
                                               command=self.select_files
                                               )
 
         # Folder selection button
-        self.folder_button = self.create_button(text="フォルダを選択",
+        self.folder_button = self.create_button(root = self.root, 
+                                                text="フォルダを選択",
                                                 command=self.select_folder
                                                 )
         
         # Label to display selected files
-        self.file_label = tk.Label(self.root, text="選択されたファイルはありません", wraplength=400, justify="left")
-        self.file_label.pack(pady=5)
-
+        self.file_label = self.create_label(root=self.root, 
+                                            text="選択されたファイルはありません"
+                                            )
         # Label to display selected folder
-        self.folder_label = tk.Label(self.root, text="選択されたフォルダはありません", wraplength=400, justify="left")
-        self.folder_label.pack(pady=5)
+        self.folder_label = self.create_label(root=self.root, 
+                                              text="選択されたフォルダはありません"
+                                              )
         
         # Create dropdown list
         values = ["強めの圧縮", "普通の圧縮", "弱めの圧縮"]
@@ -34,7 +37,8 @@ class UI_Window:
         self.combo.bind("<<ComboboxSelected>>", self.on_selects)
         
         # Compress button
-        self.compress_button = self.create_button(text="圧縮する",
+        self.compress_button = self.create_button(root=self.root, 
+                                                  text="圧縮する",
                                                   command=self.compress_images
                                                   )
         
@@ -46,6 +50,13 @@ class UI_Window:
         self.image_list_label = tk.Label(self.image_frame, text="選択された画像一覧", font=("Arial", 12, "bold"))
         self.image_list_label.pack(side="top", pady=5)
         self.image_list_label.pack_forget()  # Hide initially
+        
+        self.image_list_label = self.create_label(root=self.image_frame,
+                                                  text="選択された画像一覧",
+                                                  wraplength=400,
+                                                  font=("Arial", 12, "bold"),
+                                                  is_hidden=True
+                                                  )
         
         # Scrollable frame for images
         self.canvas = Canvas(self.root)
@@ -65,7 +76,7 @@ class UI_Window:
         # List to store image references
         self.image_refs = []
     
-    def create_button(self, text, command, bg="SystemButtonFace", fg="black", width=15, height=2):
+    def create_button(self, root, text, command, bg="SystemButtonFace", fg="black", width=15, height=2):
         """
         Create a tkinter button with customizable options.
 
@@ -80,7 +91,7 @@ class UI_Window:
         Returns:
             tk.Button: The created button.
         """
-        button = tk.Button(self.root,
+        button = tk.Button(root,
                             text=text,
                             command=command,
                             bg=bg,
@@ -90,6 +101,26 @@ class UI_Window:
                             )
         button.pack(pady=5)
         return button
+    
+    def create_label(self, root, text, wraplength=400, font=("TkDefaultFont", 9, "normal"), justify="left", is_hidden=False):
+        """
+        Create a tkinter label with customizable options.
+
+        Args:
+            text (str): The label text.
+            wraplength (int, optional): Max width before text wraps. Default is 400.
+            font (tuple, optional): Font style. Default is ("TkDefaultFont", 9, "normal").
+            justify (str, optional): Text alignment. Default is "left".
+            is_hidden (bool, optional): If True, the label will be created but hidden using pack_forget().
+
+        Returns:
+            tk.Label: The created label.
+        """
+        label = tk.Label(root, text=text, wraplength=wraplength, font=font, justify=justify)
+        label.pack(pady=5)
+        if is_hidden:
+            label.pack_forget() # Hide initially
+        return label
     
     def on_selects(self, event):
         """
@@ -169,4 +200,6 @@ class UI_Window:
 if __name__ == "__main__":
     root = tk.Tk()
     app = UI_Window(root)
+    default_font = tk.Label(root).cget("font")
+    print(f"Default font: {default_font}")
     root.mainloop()
