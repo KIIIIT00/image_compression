@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import filedialog, ttk, Canvas
 from PIL import Image, ImageTk
 
+import time
 class UI_Window:
     def __init__(self, root):
         self.root = root
@@ -43,6 +44,8 @@ class UI_Window:
                                                   )
         
         # Progress bar
+        self.progress = ttk.Progressbar(self.root, orient="horizontal", length=300, mode="determinate")
+        self.progress.place(relx=0.5, rely=0.5, anchor="center")
         
         # Frame for image list (for better positioning)
         self.image_frame = tk.Frame(self.root)
@@ -135,7 +138,27 @@ class UI_Window:
         Process when the compress button is clicked
         """
         selected_option = self.combo.get()
-        print(f"選択された圧縮レベル: {selected_option}")
+        print(f"Selected Compression Level: {selected_option}")
+
+        # Show progress bar
+        self.progress["value"] = 0  # Reset progress bar
+        self.root.update_idletasks()
+
+        if not self.image_refs:
+            print("No images to compress!")
+            return
+
+        num_images = len(self.image_refs)
+
+        for i in range(num_images):
+            time.sleep(0.5)  # Simulate compression delay
+            self.progress["value"] = ((i + 1) / num_images) * 100
+            self.root.update_idletasks()  # Update UI
+
+        print("Compression completed!")
+        time.sleep(0.5)
+        self.progress["value"] = 0
+        self.root.update_idletasks()
         
     def select_files(self):
         """
@@ -202,6 +225,4 @@ class UI_Window:
 if __name__ == "__main__":
     root = tk.Tk()
     app = UI_Window(root)
-    default_font = tk.Label(root).cget("font")
-    print(f"Default font: {default_font}")
     root.mainloop()
