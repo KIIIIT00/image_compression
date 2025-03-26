@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, ttk, Canvas
 from PIL import Image, ImageTk
+import threading
 
 import time
 class UI_Window:
@@ -43,9 +44,6 @@ class UI_Window:
                                                   command=self.compress_images
                                                   )
         
-        # Progress bar
-        self.progress = ttk.Progressbar(self.root, orient="horizontal", length=300, mode="determinate")
-        self.progress.place(relx=0.5, rely=0.5, anchor="center")
         
         # Frame for image list (for better positioning)
         self.image_frame = tk.Frame(self.root)
@@ -135,31 +133,63 @@ class UI_Window:
     
     def compress_images(self):
         """
-        Process when the compress button is clicked
+        Executes the image compression process and displays a progress bar in a separate window.
         """
         selected_option = self.combo.get()
         print(f"Selected Compression Level: {selected_option}")
-
-        # Show progress bar
-        self.progress["value"] = 0  # Reset progress bar
-        self.root.update_idletasks()
 
         if not self.image_refs:
             print("No images to compress!")
             return
 
-        num_images = len(self.image_refs)
+        # Create a separate window for the progress bar
+        self.progress_window = tk.Toplevel(self.root)
+        self.progress_window.title("Compressing...")
+        self.progress_window.geometry("400x100")  # Set window size
 
+        # Create a progress bar in the separate window
+        self.progress = ttk.Progressbar(self.progress_window, orient="horizontal", length=300, mode="determinate")
+        self.progress.pack(pady=20)
+        
+        # Start the compression process in a separate thread
+        threading.Thread(target=self.run_compression, daemon=True).start()
+
+    def run_compression(self):
+        """
+        Runs the image compression process and updates the progress bar.
+        This function is executed in a separate thread to prevent UI blocking.
+        """
+        num_images = len(self.image_refs)
         for i in range(num_images):
-            time.sleep(0.5)  # Simulate compression delay
+            time.sleep(0.5)  # Simulate compression process
             self.progress["value"] = ((i + 1) / num_images) * 100
-            self.root.update_idletasks()  # Update UI
+            self.progress_window.update()  # Ensure the UI updates
 
         print("Compression completed!")
         time.sleep(0.5)
-        self.progress["value"] = 0
-        self.root.update_idletasks()
+        self.progress_window.destroy()  # Close the window after compression is complete
         
+        # Reset the selected files, folder, and displayed images
+        self.reset_selection()
+        
+    def reset_selection(self):
+        """
+        Reset the selected files, folder, and display images after compression.
+        """
+        self.file_label.config(text="選択されたファイルはありません")
+        self.folder_label.config(text="選択されたフォルダはありません")
+        self.combo.set("普通の圧縮")  # Reset compression level
+        self.image_refs.clear()  # Clear image references
+        self.image_list_label.pack_forget()  # Hide image list label
+        self.clear_image_display()  # Clear displayed images
+    
+    def clear_image_display(self):
+        """
+        Clear the displayed images from the scrollable frame.
+        """
+        for widget in self.scroll_frame.winfo_children():
+            widget.destroy()
+            
     def select_files(self):
         """
         Open file selection dialog
