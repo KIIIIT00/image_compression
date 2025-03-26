@@ -168,6 +168,27 @@ class UI_Window:
         print("Compression completed!")
         time.sleep(0.5)
         self.progress_window.destroy()  # Close the window after compression is complete
+        
+        # Reset the selected files, folder, and displayed images
+        self.reset_selection()
+        
+    def reset_selection(self):
+        """
+        Reset the selected files, folder, and display images after compression.
+        """
+        self.file_label.config(text="選択されたファイルはありません")
+        self.folder_label.config(text="選択されたフォルダはありません")
+        self.combo.set("普通の圧縮")  # Reset compression level
+        self.image_refs.clear()  # Clear image references
+        self.image_list_label.pack_forget()  # Hide image list label
+        self.clear_image_display()  # Clear displayed images
+    
+    def clear_image_display(self):
+        """
+        Clear the displayed images from the scrollable frame.
+        """
+        for widget in self.scroll_frame.winfo_children():
+            widget.destroy()
             
     def select_files(self):
         """
