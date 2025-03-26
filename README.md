@@ -105,6 +105,8 @@ python compression.py --input_folder /path/to/images --output_folder /path/to/ou
 image-compression/
 ├── compression.py
 ├── requirements.txt
+├── LICENSE
+├── README.md
 ├── options/
 │   └── compression_option.py
 └── util/
