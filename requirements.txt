@@ -1,4 +1,3 @@
 Pillow
 pillow_heif
 pathlib
-Pillow
