@@ -53,6 +53,8 @@ pip install -r requirements.txt
 image-compression/
 ├── compression.py           # メインアプリケーションファイル
 ├── requirements.txt         # Python依存パッケージ
+├── LICENSE
+├── README.md
 ├── options/
 │   └── compression_option.py  # コマンドラインオプション設定
 └── util/
