@@ -1,3 +1,2 @@
-Pillow
-pillow_heif
-pathlib
+Pillow == 11.1.0
+pillow_heif==0.21.0
